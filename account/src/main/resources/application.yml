@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: account
+
+graphql:
+  packages:
+    - "org.study.account.graphql"
+    - "org.study.account.model"
+    - "org.study.account.exception"
