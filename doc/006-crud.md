@@ -68,6 +68,34 @@ CREATE SCHEMA
 
 ![image-20200817023718478](/image-20200817023718478.png)
 
+### 2.1.3 插入测试数据
+
+```
+@Service
+@Transactional
+class TableService(
+        val studentService: StudentService,
+        val teacherService: TeacherService,
+        val courseService: CourseService,
+        val scoreService: ScoreService
+) {
+    val log = LoggerFactory.getLogger(this::class.java)
+
+    fun insertTestData() {
+        ExposedLogger.addLogger(log)
+
+        val students = studentService.init()
+        val teachers = teacherService.init()
+        val courses = courseService.init(teachers)
+        scoreService.init(students, courses)
+    }
+}
+```
+
+
+
+
+
 
 
 # 3 Mutations

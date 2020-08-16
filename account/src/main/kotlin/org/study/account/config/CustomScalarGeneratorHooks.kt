@@ -46,10 +46,10 @@ internal val graphqlUnitType = GraphQLScalarType.newScalar()
         .coercing(UnitCoercing)
         .build()
 
-private object UnitCoercing : Coercing<Unit, String> {
+private object UnitCoercing : Coercing<Unit, Unit> {
     override fun parseValue(input: Any?): Unit = Unit
 
     override fun parseLiteral(input: Any?): Unit = Unit
 
-    override fun serialize(dataFetcherResult: Any?): String = "Unit"
+    override fun serialize(dataFetcherResult: Any?): Unit = Unit
 }

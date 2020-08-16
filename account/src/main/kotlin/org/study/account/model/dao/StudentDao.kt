@@ -1,16 +1,35 @@
 package org.study.account.model.dao
 
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
+import org.joda.time.format.DateTimeFormat
 import org.springframework.stereotype.Repository
+import org.study.common.util.datePattern
 import org.study.common.util.toDate
-import org.study.account.model.entity.Student as Entity
 import org.study.account.model.dto.Student as Dto
+import org.study.account.model.entity.Student as Entity
+import org.study.account.model.vo.Student as Vo
 
 @Repository
 class StudentDao {
-    fun insert(dto:Dto) = Entity.insert {
+    fun insert(dto: Dto) = Entity.insert {
         it[name] = dto.name
         it[birthday] = dto.birthday.toDate()
         it[sex] = dto.sex
     }
+
+    fun batchInsert(list: List<Dto>): List<Vo> = Entity.batchInsert(list) { dto ->
+        this[Entity.name] = dto.name
+        this[Entity.birthday] = dto.birthday.toDate()
+        this[Entity.sex] = dto.sex
+    }.map { rowMapper(it) }
+
+    private fun rowMapper(it: ResultRow): Vo = Vo(
+            it[Entity.id],
+            it[Entity.name],
+            it[Entity.birthday].toString(DateTimeFormat.forPattern(datePattern)),
+            it[Entity.sex],
+            it[Entity.createTime]
+    )
 }

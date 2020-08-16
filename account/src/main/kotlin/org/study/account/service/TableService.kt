@@ -12,13 +12,27 @@ import org.study.account.util.ExposedLogger
 
 @Service
 @Transactional
-class TableService {
+class TableService(
+        val studentService: StudentService,
+        val teacherService: TeacherService,
+        val courseService: CourseService,
+        val scoreService: ScoreService
+) {
     val log = LoggerFactory.getLogger(this::class.java)
 
-    fun init() {
+    fun createTables() {
         ExposedLogger.addLogger(log)
 
         SchemaUtils.drop(Student, Score, Course, Teacher)
         SchemaUtils.create(Student, Score, Course, Teacher)
+    }
+
+    fun insertTestData() {
+        ExposedLogger.addLogger(log)
+
+        val students = studentService.init()
+        val teachers = teacherService.init()
+        val courses = courseService.init(teachers)
+        scoreService.init(students, courses)
     }
 }
