@@ -23,6 +23,7 @@ repositories {
     maven(url = "https://repo.spring.io/snapshot")
     jcenter()
     maven(url = "http://116.196.123.19:8081/repository/ms-kotlin")
+    maven(url = "https://dl.bintray.com/kotlin/exposed")
 }
 
 dependencies {
@@ -30,14 +31,24 @@ dependencies {
     val kotestVersion = "4.1.3"
     val springmockkVersion = "2.0.2"
     val logbackVersion = "6.4"
-    val commonVersion:String by project
+    val exposedVersion = "0.25.1"
+    val psqlVersion = "42.2.15"
+    val hikariVersion = "3.4.5"
+    val commonVersion: String by project
 
-    implementation(kotlin("stdlib-jdk8"))
     implementation("org.study:common:$commonVersion")
     implementation("com.expediagroup:graphql-kotlin-spring-server:$graphqlVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
+    implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion") {
+        exclude(group = "com.h2database")
+    }
+    implementation("org.postgresql:postgresql:$psqlVersion")
+    implementation("org.jetbrains.exposed:spring-transaction:$exposedVersion") {
+        exclude(group = "com.h2database")
+    }
+    implementation("com.zaxxer:HikariCP:$hikariVersion")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test"){
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
         exclude(module = "mockito-core")
     }
@@ -49,7 +60,7 @@ dependencies {
 }
 
 tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>{
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
             jvmTarget = "1.8"

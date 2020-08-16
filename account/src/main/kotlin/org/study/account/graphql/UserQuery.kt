@@ -18,8 +18,7 @@ class UserQuery : Query {
         return User(UUID.randomUUID().toString(), "yuri", 18)
     }
 
-    fun noContent(): Boolean {
+    fun noContent() {
         log.info("test void")
-        return false
     }
 }

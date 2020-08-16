@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.study"
-version = "1.0.0"
+version = "1.0.1"
 
 idea {
     module {
@@ -21,7 +21,10 @@ repositories {
 }
 
 dependencies {
+    val jodaVersion = "2.10.5"
+
     implementation(kotlin("stdlib-jdk8"))
+    implementation("joda-time:joda-time:$jodaVersion")
 }
 
 tasks {
@@ -46,7 +49,7 @@ publishing {
             setUrl("http://116.196.123.19:8081/repository/ms-kotlin")
             credentials {
                 username = "admin"
-                password = "yuri123."
+                password = "Yuri2000."
             }
         }
     }

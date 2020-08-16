@@ -1,6 +1,13 @@
 spring:
   application:
     name: account
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: 123456
+    url: jdbc:postgresql://116.196.122.231:5432/graphql
+    hikari:
+      schema: user
 
 graphql:
   packages:
