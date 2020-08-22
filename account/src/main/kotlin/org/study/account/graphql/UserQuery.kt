@@ -1,5 +1,7 @@
 package org.study.account.graphql
 
+import com.expediagroup.graphql.annotations.GraphQLDescription
+import com.expediagroup.graphql.scalars.ID
 import com.expediagroup.graphql.spring.operations.Query
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -11,14 +13,16 @@ import java.util.*
 class UserQuery : Query {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun me(flag: Boolean): User {
+    @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
+    fun customException(flag: Boolean): User {
         if (flag) {
             throw ErrorCodeException("XXXXXXXXXXX", "故意出错")
         }
-        return User(UUID.randomUUID().toString(), "yuri", 18)
+        return User(ID(UUID.randomUUID().toString()), "yuri", 18)
     }
 
-    fun noContent() {
+    @GraphQLDescription("custom scalar: Kotlin Unit")
+    fun customScalar() {
         log.info("test void")
     }
 }

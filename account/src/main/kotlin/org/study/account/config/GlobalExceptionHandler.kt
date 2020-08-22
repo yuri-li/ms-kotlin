@@ -6,10 +6,11 @@ import graphql.execution.DataFetcherExceptionHandler
 import graphql.execution.DataFetcherExceptionHandlerParameters
 import graphql.execution.DataFetcherExceptionHandlerResult
 import org.slf4j.LoggerFactory
+import org.springframework.context.annotation.Configuration
 import org.study.account.exception.ErrorCodeDataFetchingGraphQLError
 import org.study.account.exception.ErrorCodeException
 
-
+@Configuration
 class GlobalExceptionHandler : DataFetcherExceptionHandler {
     private val log = LoggerFactory.getLogger(this::class.java)
 

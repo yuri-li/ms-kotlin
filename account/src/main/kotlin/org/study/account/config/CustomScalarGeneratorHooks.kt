@@ -1,17 +1,18 @@
 package org.study.account.config
 
-import com.expediagroup.graphql.directives.KotlinDirectiveWiringFactory
 import com.expediagroup.graphql.hooks.SchemaGeneratorHooks
 import graphql.schema.Coercing
 import graphql.schema.GraphQLScalarType
 import graphql.schema.GraphQLType
 import org.springframework.beans.factory.BeanFactoryAware
+import org.springframework.context.annotation.Configuration
 import reactor.core.publisher.Mono
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.full.isSubclassOf
 
-class CustomScalarGeneratorHooks(override val wiringFactory: KotlinDirectiveWiringFactory) : SchemaGeneratorHooks {
+@Configuration
+class CustomScalarGeneratorHooks : SchemaGeneratorHooks {
 
     /**
      * Register additional GraphQL scalar types.

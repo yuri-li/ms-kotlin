@@ -9,6 +9,9 @@ import org.study.account.service.TableService
 class TableMutation(val service: TableService) : Mutation {
     val log = LoggerFactory.getLogger(this::class.java)
 
+    fun doNothing(){
+        log.info("just for test")
+    }
     fun createTables() {
         log.info("create tables")
 

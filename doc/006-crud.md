@@ -10,6 +10,8 @@ typora-root-url: assets
 
 场景： 使用GraphQL模拟实现`SQL经典练习题（老师，学生，成绩）`
 
+![preview](/view)
+
 ## 2.1 database
 
 ### 2.1.1 创建一个空的database
@@ -22,7 +24,7 @@ typora-root-url: assets
 [root@JD3 ~]# docker volume create db
 
 # 3 启动容器
-[root@JD3 ~]# docker container run -d -p 5432:5432 --name postgres -v db:/var/lib/postgresql/data  -e POSTGRES_PASSWORD=123456 postgres:13-alpine
+[root@JD3 ~]# docker container run -d -p 5432:5432 --name postgres -v db:/var/lib/postgresql/data  -e POSTGRES_PASSWORD=Yuri123. postgres:13-alpine
 
 # 4 进入容器
 [root@JD3 ~]# docker container exec -it postgres /bin/bash
@@ -92,6 +94,81 @@ class TableService(
 }
 ```
 
+## 2.2 scalars
+
+### 2.2.1 ID
+
+`ID`与普通的String不同，`ID`特指主键
+
+![image-20200819131732702](/image-20200819131732702.png)
+
+### 2.2.2 Unit
+
+```
+import com.expediagroup.graphql.hooks.SchemaGeneratorHooks
+import graphql.schema.Coercing
+import graphql.schema.GraphQLScalarType
+import graphql.schema.GraphQLType
+import org.springframework.beans.factory.BeanFactoryAware
+import org.springframework.context.annotation.Configuration
+import reactor.core.publisher.Mono
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.isSubclassOf
+
+@Configuration
+class CustomScalarGeneratorHooks : SchemaGeneratorHooks {
+
+    /**
+     * Register additional GraphQL scalar types.
+     */
+    override fun willGenerateGraphQLType(type: KType): GraphQLType? = when (type.classifier) {
+        Unit::class -> graphqlUnitType
+        else -> null
+    }
+
+    /**
+     * Register Reactor Mono monad type.
+     */
+    override fun willResolveMonad(type: KType): KType = when (type.classifier) {
+        Mono::class -> type.arguments.firstOrNull()?.type
+        else -> type
+    } ?: type
+
+    /**
+     * Exclude the Spring bean factory interface
+     */
+    override fun isValidSuperclass(kClass: KClass<*>): Boolean {
+        return when {
+            kClass.isSubclassOf(BeanFactoryAware::class) -> false
+            else -> super.isValidSuperclass(kClass)
+        }
+    }
+}
+
+internal val graphqlUnitType = GraphQLScalarType.newScalar()
+        .name("Unit")
+        .description("Unit in Kotlin corresponds to the void in Java")
+        .coercing(UnitCoercing)
+        .build()
+
+private object UnitCoercing : Coercing<Unit, Unit> {
+    override fun parseValue(input: Any?): Unit = Unit
+
+    override fun parseLiteral(input: Any?): Unit = Unit
+
+    override fun serialize(dataFetcherResult: Any?): Unit = Unit
+}
+```
+
+## 2.3 嵌套查询
+
+### 2.3.1 DataFetcher
+
+
+
+
+### 2.3.2 DataLoader
 
 
 
