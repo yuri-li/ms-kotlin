@@ -96,7 +96,7 @@ class TableService(
 
 ## 2.2 scalars
 
-### 2.2.1 ID
+### ~~2.2.1 ID~~
 
 `ID`与普通的String不同，`ID`特指主键
 
@@ -161,16 +161,139 @@ private object UnitCoercing : Coercing<Unit, Unit> {
 }
 ```
 
+### 2.2.3 `org.joda.time.DateTime`
+
+```
+abstract class CustomCoercing<S, T> : Coercing<S, T> {
+    final override fun serialize(dataFetcherResult: Any): T = write(dataFetcherResult as S)
+    final override fun parseValue(input: Any): S = read(input as T)
+    final override fun parseLiteral(input: Any): S = read(input as T)
+    final override fun parseLiteral(input: Any?, variables: MutableMap<String, Any>?): S {
+        return super.parseLiteral(input, variables)
+    }
+
+    abstract fun write(s: S): T
+    abstract fun read(t: T): S
+}
+
+internal val graphqlDateTimeType = GraphQLScalarType.newScalar()
+        .name("DateTime")
+        .description("org.joda.time.DateTime")
+        .coercing(object : CustomCoercing<DateTime, String>() {
+            override fun write(s: DateTime): String = s.toString(toDatetimeFormatter())
+
+            override fun read(t: String): DateTime = t.toDateTime()
+        })
+        .build()
+
+```
+
 ## 2.3 嵌套查询
 
-### 2.3.1 DataFetcher
+### 2.3.1 model
+
+```
+package org.study.account.model.vo
+
+import com.expediagroup.graphql.annotations.GraphQLIgnore
+import org.joda.time.DateTime
+
+data class Course(
+        val id: String,
+        val name: String,
+        @GraphQLIgnore
+        val teacherId: String,
+        val createTime: DateTime
+) {
+    lateinit var teacher: Teacher
+}
+```
+
+### 2.3.2 Query
+
+```
+import org.study.account.model.vo.Course
+import org.study.account.service.CourseService
+import org.springframework.stereotype.Component
+import com.expediagroup.graphql.spring.operations.Query
+
+@Component
+class UserQuery(val courseService: CourseService) : Query {
+    @GraphQLDescription("Get all courses")
+    fun courses(): List<Course> = courseService.findAll()
+}
+```
+
+### 2.3.3 DataFetcher
+
+```
+import graphql.schema.DataFetcher
+import graphql.schema.DataFetchingEnvironment
+import org.springframework.beans.factory.BeanFactory
+import org.springframework.beans.factory.BeanFactoryAware
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
+import org.study.account.model.vo.Course
+import org.study.account.model.vo.Teacher
+import java.util.concurrent.CompletableFuture
+
+@Component
+@Scope("prototype")
+class TeacherDataFetcher : DataFetcher<CompletableFuture<Teacher>>, BeanFactoryAware {
+    private lateinit var beanFactory: BeanFactory
+
+    override fun setBeanFactory(beanFactory: BeanFactory) {
+        this.beanFactory = beanFactory
+    }
+
+    override fun get(environment: DataFetchingEnvironment): CompletableFuture<Teacher> {
+        val teacherId = environment.getSource<Course>().teacherId
+        return environment
+                .getDataLoader<String, Teacher>("teacherLoader")
+                .load(teacherId)
+    }
+}
+```
 
 
+### 2.3.4 DataLoader
 
+```
+import com.expediagroup.graphql.spring.execution.DataLoaderRegistryFactory
+import org.dataloader.DataLoader
+import org.dataloader.DataLoaderRegistry
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.study.account.model.vo.Teacher
+import org.study.account.service.TeacherService
+import java.util.concurrent.CompletableFuture
 
-### 2.3.2 DataLoader
+@Configuration
+class DataLoaderConfiguration(val teacherService: TeacherService) {
 
+    @Bean
+    fun dataLoaderRegistryFactory(): DataLoaderRegistryFactory {
+        return object : DataLoaderRegistryFactory {
+            override fun generate(): DataLoaderRegistry {
+                val registry = DataLoaderRegistry()
+                val teacherLoader = DataLoader<String, Teacher> { ids ->
+                    CompletableFuture.supplyAsync { teacherService.getTeachers(ids) }
+                }
+                registry.register("teacherLoader", teacherLoader)
+                return registry
+            }
+        }
+    }
+}
+```
 
+### 2.3.5 other settings
+
+或许是因为`graphql-kotlin`不够完善，官网给出的例子，还有其他的配置。有点多...
+
+请参考提交记录`N+1 problem`
+
+## 2.4 pagination
 
 
 

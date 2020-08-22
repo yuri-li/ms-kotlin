@@ -7,10 +7,12 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.study.account.exception.ErrorCodeException
 import org.study.account.model.User
+import org.study.account.model.vo.Course
+import org.study.account.service.CourseService
 import java.util.*
 
 @Component
-class UserQuery : Query {
+class UserQuery(val courseService: CourseService) : Query {
     private val log = LoggerFactory.getLogger(this::class.java)
 
     @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
@@ -25,4 +27,7 @@ class UserQuery : Query {
     fun customScalar() {
         log.info("test void")
     }
+
+    @GraphQLDescription("Get all courses")
+    fun courses(): List<Course> = courseService.findAll()
 }

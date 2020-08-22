@@ -8,8 +8,8 @@ import org.joda.time.format.DateTimeFormat
 const val datePattern = "yyyy-MM-dd"
 const val datetimePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
 
-private fun toDateFormatter() = DateTimeFormat.forPattern(datePattern)
-private fun toDatetimeFormatter() = DateTimeFormat.forPattern(datetimePattern)
+fun toDateFormatter() = DateTimeFormat.forPattern(datePattern)
+fun toDatetimeFormatter() = DateTimeFormat.forPattern(datetimePattern)
 
 fun String.toDateTime() = DateTime.parse(this, toDatetimeFormatter())
 fun LocalDate.toDateTime() = this.toDateTime(LocalTime(0, 0, 0, 0))

@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    val graphqlVersion = "3.4.2"
+    val graphqlVersion = "3.5.0"
     val kotestVersion = "4.1.3"
     val springmockkVersion = "2.0.2"
     val logbackVersion = "6.4"
