@@ -2,6 +2,7 @@ package org.study.account.model.dao
 
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
+import org.jetbrains.exposed.sql.select
 import org.springframework.stereotype.Repository
 import org.study.account.model.dto.Score as Dto
 import org.study.account.model.entity.Score as Entity
@@ -24,4 +25,6 @@ class ScoreDao {
             it[Entity.score].toFloat(),
             it[Entity.createTime]
     )
+
+    fun findScoresByStudentIds(studentIds: List<String>): List<Vo> = Entity.select { Entity.studentId inList studentIds }.orderBy(Entity.createTime).map { rowMapper(it) }
 }

@@ -1,15 +1,20 @@
 package org.study.account.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.study.account.model.dao.ScoreDao
 import org.study.account.model.vo.Course
 import org.study.account.model.vo.Student
+import org.study.account.util.ExposedLogger
 import org.study.account.model.dto.Score as Dto
+import org.study.account.model.vo.Score as Vo
 
 @Service
 @Transactional
 class ScoreService(val dao: ScoreDao) {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     fun init(students: List<Student>, courses: List<Course>) {
         dao.batchInsert(listOf(
                 Dto(students[0].id, courses[0].id, 80.toFloat()),
@@ -33,4 +38,9 @@ class ScoreService(val dao: ScoreDao) {
         ))
     }
 
+    fun findScoresByStudentIds(studentIds: List<String>): List<Vo> {
+        ExposedLogger.addLogger(log)
+
+        return dao.findScoresByStudentIds(studentIds)
+    }
 }

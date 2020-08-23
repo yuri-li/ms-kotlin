@@ -10,12 +10,12 @@ object Student : Table(name = "t_student") {
     val id = varchar("id", 36).clientDefault { UUID.randomUUID().toString() }
     val name = varchar("c_name", 20)
     val birthday = date("birthday")
-    val sex = enumerationByName("sex", 10, Sex::class)
+    val gender = enumerationByName("gender", 10, Gender::class)
     val createTime = datetime("create_time").clientDefault { DateTime.now() }
 
     override val primaryKey: PrimaryKey = PrimaryKey(id)
 }
 
-enum class Sex {
+enum class Gender {
     Male, Female, Neutral
 }

@@ -12,7 +12,7 @@ import org.study.account.model.vo.Course as Vo
 @Service
 @Transactional
 class CourseService(val dao: CourseDao) {
-    val log = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     fun init(teachers: List<Teacher>): List<Vo> {
         val courseNames = listOf("语文", "数学", "英语")

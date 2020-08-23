@@ -188,28 +188,9 @@ internal val graphqlDateTimeType = GraphQLScalarType.newScalar()
 
 ```
 
-## 2.3 嵌套查询
+## 2.3 一对一嵌套查询
 
-### 2.3.1 model
-
-```
-package org.study.account.model.vo
-
-import com.expediagroup.graphql.annotations.GraphQLIgnore
-import org.joda.time.DateTime
-
-data class Course(
-        val id: String,
-        val name: String,
-        @GraphQLIgnore
-        val teacherId: String,
-        val createTime: DateTime
-) {
-    lateinit var teacher: Teacher
-}
-```
-
-### 2.3.2 Query
+### 2.3.1 Model & Query
 
 ```
 import org.study.account.model.vo.Course
@@ -222,9 +203,25 @@ class UserQuery(val courseService: CourseService) : Query {
     @GraphQLDescription("Get all courses")
     fun courses(): List<Course> = courseService.findAll()
 }
+
+data class Course(
+        val id: String,
+        val name: String,
+        @GraphQLIgnore
+        val teacherId: String,
+        val createTime: DateTime
+) {
+    lateinit var teacher: Teacher
+}
+
+data class Teacher(
+        val id: String,
+        val name: String,
+        val createTime: DateTime
+)
 ```
 
-### 2.3.3 DataFetcher
+### 2.3.2 DataFetcher
 
 ```
 import graphql.schema.DataFetcher
@@ -256,7 +253,7 @@ class TeacherDataFetcher : DataFetcher<CompletableFuture<Teacher>>, BeanFactoryA
 ```
 
 
-### 2.3.4 DataLoader
+### 2.3.3 DataLoader
 
 ```
 import com.expediagroup.graphql.spring.execution.DataLoaderRegistryFactory
@@ -287,13 +284,88 @@ class DataLoaderConfiguration(val teacherService: TeacherService) {
 }
 ```
 
-### 2.3.5 other settings
+### 2.3.4 other settings
 
 或许是因为`graphql-kotlin`不够完善，官网给出的例子，还有其他的配置。有点多...
 
 请参考提交记录`N+1 problem`
 
-## 2.4 pagination
+## 2.4 一对多嵌套查询
+
+### 2.4.1 Model & Query
+
+```
+import org.study.account.model.vo.Student
+import org.study.account.service.StudentService
+import org.springframework.stereotype.Component
+import com.expediagroup.graphql.spring.operations.Query
+
+@Component
+class UserQuery(val studentService: StudentService) : Query {
+    fun students() : List<Student> = studentService.findAll()
+}
+
+data class Student(
+        val id: String,
+        val name: String,
+        val birthday: String,
+        val gender: Gender,
+        val createTime: DateTime
+) {
+    lateinit var scores: List<Score>
+}
+
+data class Score(
+        val id: String,
+        @GraphQLIgnore
+        val studentId: String,
+        val courseId: String,
+        val score: Float,
+        val createTime: DateTime
+)
+```
+
+### 2.4.2 DataFetcher
+
+```
+abstract class CustomDataFetcher<T> : DataFetcher<CompletableFuture<T>>, BeanFactoryAware {
+    private lateinit var beanFactory: BeanFactory
+
+    final override fun setBeanFactory(beanFactory: BeanFactory) {
+        this.beanFactory = beanFactory
+    }
+}
+
+@Component("ScoreDataFetcher")
+@Scope("prototype")
+class ScoreDataFetcher : CustomDataFetcher<List<Score>>() {
+    override fun get(environment: DataFetchingEnvironment): CompletableFuture<List<Score>> {
+        val studentId = environment.getSource<Student>().id
+        return environment
+                .getDataLoader<String, List<Score>>("scoreLoader")
+                .load(studentId)
+    }
+}
+```
+
+### 2.4.3 DataLoader
+
+```
+org.study.account.config.DataLoaderConfiguration
+
+...
+register("scoreLoader", DataLoader<String, List<Score>> { studentIds ->
+    CompletableFuture.supplyAsync {
+        val scores: List<Score> = scoreService.findScoresByStudentIds(studentIds)
+        studentIds.map { studentId -> scores.filter { it.studentId == studentId } }
+    }
+})
+...
+```
+
+
+
+## 2.5 pagination
 
 
 

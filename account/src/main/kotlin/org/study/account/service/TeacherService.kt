@@ -11,7 +11,7 @@ import org.study.account.model.vo.Teacher as Vo
 @Service
 @Transactional
 class TeacherService(val dao: TeacherDao) {
-    val log = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     fun init() = dao.batchInsert(listOf(
             Dto("张老师"),
@@ -19,9 +19,9 @@ class TeacherService(val dao: TeacherDao) {
             Dto("王老师")
     ))
 
-    fun getTeachers(ids: List<String>): List<Vo> {
+    fun findTeachers(ids: List<String>): List<Vo> {
         ExposedLogger.addLogger(log)
 
-        return dao.getTeachers(ids)
+        return dao.findTeachers(ids)
     }
 }

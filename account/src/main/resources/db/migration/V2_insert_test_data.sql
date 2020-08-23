@@ -1,12 +1,12 @@
 
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1990-01-01', '赵雷', '2020-08-16 20:29:24.018000', '7e209ad4-59c8-4aa8-a93c-15d53cc1820c', 'Male');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1990-12-21', '钱电', '2020-08-16 20:29:24.022000', '41893fdf-5cff-4e0a-b306-21b33c09841c', 'Male');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1990-05-20', '孙风', '2020-08-16 20:29:24.022000', '87652575-2401-4a03-9c7f-9811df86f417', 'Male');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1990-08-06', '李云', '2020-08-16 20:29:24.022000', '81a8b4f7-ef0d-4568-9937-503793b5d394', 'Male');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1991-12-01', '周梅', '2020-08-16 20:29:24.022000', '5d470c78-62aa-46b3-be6d-22ce8ff3cd44', 'Female');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1992-03-01', '吴兰', '2020-08-16 20:29:24.022000', 'e319425b-a6d8-4193-b544-ed7f1c2c730a', 'Female');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1989-07-01', '郑竹', '2020-08-16 20:29:24.022000', '251f826f-5b95-4a24-a678-fb01c2025a1c', 'Female');
-INSERT INTO t_student (birthday, c_name, create_time, id, sex) VALUES ('1990-01-20', '王菊', '2020-08-16 20:29:24.022000', '48f387d1-9270-43f9-a88a-f937e7e2e350', 'Female');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1990-01-01', '赵雷', '2020-08-16 20:29:24.018000', '7e209ad4-59c8-4aa8-a93c-15d53cc1820c', 'Male');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1990-12-21', '钱电', '2020-08-16 20:29:24.022000', '41893fdf-5cff-4e0a-b306-21b33c09841c', 'Male');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1990-05-20', '孙风', '2020-08-16 20:29:24.022000', '87652575-2401-4a03-9c7f-9811df86f417', 'Male');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1990-08-06', '李云', '2020-08-16 20:29:24.022000', '81a8b4f7-ef0d-4568-9937-503793b5d394', 'Male');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1991-12-01', '周梅', '2020-08-16 20:29:24.022000', '5d470c78-62aa-46b3-be6d-22ce8ff3cd44', 'Female');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1992-03-01', '吴兰', '2020-08-16 20:29:24.022000', 'e319425b-a6d8-4193-b544-ed7f1c2c730a', 'Female');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1989-07-01', '郑竹', '2020-08-16 20:29:24.022000', '251f826f-5b95-4a24-a678-fb01c2025a1c', 'Female');
+INSERT INTO t_student (birthday, c_name, create_time, id, gender) VALUES ('1990-01-20', '王菊', '2020-08-16 20:29:24.022000', '48f387d1-9270-43f9-a88a-f937e7e2e350', 'Female');
 INSERT INTO t_teacher (c_name, create_time, id) VALUES ('张老师', '2020-08-16 20:29:24.468000', 'ac6b800f-7a6c-4139-9988-ceba3682bc09');
 INSERT INTO t_teacher (c_name, create_time, id) VALUES ('李老师', '2020-08-16 20:29:24.468000', '4140da62-c26b-48c1-9566-6c07cff83604');
 INSERT INTO t_teacher (c_name, create_time, id) VALUES ('王老师', '2020-08-16 20:29:24.468000', 'f6e75a2f-daf6-4e51-868f-b1eb130ac96f');

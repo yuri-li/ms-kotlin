@@ -20,5 +20,5 @@ class TeacherDao {
             it[Entity.createTime]
     )
 
-    fun getTeachers(ids: List<String>): List<Vo> = Entity.select { Entity.id inList ids }.map { rowMapper(it) }
+    fun findTeachers(ids: List<String>): List<Vo> = Entity.select { Entity.id inList ids }.map { rowMapper(it) }
 }
