@@ -6,6 +6,8 @@ import com.expediagroup.graphql.spring.operations.Query
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import org.study.account.exception.ErrorCodeException
+import org.study.account.model.CustomList
+import org.study.account.model.PageType
 import org.study.account.model.User
 import org.study.account.model.vo.Course
 import org.study.account.model.vo.Student
@@ -36,5 +38,16 @@ class UserQuery(
     @GraphQLDescription("Get all courses")
     fun courses(): List<Course> = courseService.findAll()
 
-    fun students() : List<Student> = studentService.findAll()
+    suspend fun students() = studentService.findAll()
+
+    fun whichHand(whichHand: String): BodyPart = when (whichHand) {
+        "right" -> RightHand(12)
+        else -> LeftHand("hello world")
+    }
 }
+
+interface BodyPart
+
+data class LeftHand(val field: String): BodyPart
+
+data class RightHand(val property: Int): BodyPart

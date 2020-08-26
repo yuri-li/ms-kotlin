@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "org.study"
-version = "1.0.1"
+version = "1.0.0"
 
 idea {
     module {

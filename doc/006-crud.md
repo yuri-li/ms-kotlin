@@ -6,7 +6,7 @@ typora-root-url: assets
 
 ![image-20200727122625469](/image-20200727122625469.png)
 
-# 2 Queries 
+# 2 basic concepts
 
 场景： 使用GraphQL模拟实现`SQL经典练习题（老师，学生，成绩）`
 
@@ -363,14 +363,19 @@ register("scoreLoader", DataLoader<String, List<Score>> { studentIds ->
 ...
 ```
 
+## 2.5 suspend
+
+## 2.6 pagination
+
+## 2.7 directive & validation
+
+## 2.8 subscription
 
 
-## 2.5 pagination
 
+# 3 Query
 
-
-
-# 3 Mutations
+# 4 Mutations
 
 
 

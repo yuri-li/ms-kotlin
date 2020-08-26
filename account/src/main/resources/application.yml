@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     username: postgres
-    password: 123456
+    password: Yuri123.
     url: jdbc:postgresql://116.196.122.231:5432/graphql
     hikari:
       schema: user

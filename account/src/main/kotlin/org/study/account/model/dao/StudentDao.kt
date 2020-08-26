@@ -1,5 +1,6 @@
 package org.study.account.model.dao
 
+import kotlinx.coroutines.coroutineScope
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
@@ -34,5 +35,7 @@ class StudentDao {
             it[Entity.createTime]
     )
 
-    fun findAll(): List<Vo> = Entity.selectAll().orderBy(Entity.createTime).map { rowMapper(it) }
+    suspend fun findAll(): List<Vo> = coroutineScope {
+        Entity.selectAll().orderBy(Entity.createTime).map { rowMapper(it) }
+    }
 }

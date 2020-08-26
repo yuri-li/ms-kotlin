@@ -26,7 +26,7 @@ class StudentService(val dao: StudentDao) {
 
     ))
 
-    fun findAll(): List<Vo> {
+    suspend fun findAll(): List<Vo> {
         ExposedLogger.addLogger(log)
 
         return dao.findAll()
