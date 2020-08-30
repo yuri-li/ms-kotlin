@@ -67,10 +67,13 @@ internal val graphqlDateTimeType = GraphQLScalarType.newScalar()
 
 abstract class CustomCoercing<S, T> : Coercing<S, T> {
     final override fun serialize(dataFetcherResult: Any): T = write(dataFetcherResult as S)
-    final override fun parseValue(input: Any): S = read(input as T)
-    final override fun parseLiteral(input: Any): S = read(input as T)
-    final override fun parseLiteral(input: Any?, variables: MutableMap<String, Any>?): S {
-        return super.parseLiteral(input, variables)
+    final override fun parseValue(input: Any): S {
+        println("--------")
+        return read(input as T)
+    }
+    final override fun parseLiteral(input: Any): S {
+        println("=========")
+        return read(input as T)
     }
 
     abstract fun write(s: S): T
