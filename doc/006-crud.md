@@ -363,13 +363,155 @@ register("scoreLoader", DataLoader<String, List<Score>> { studentIds ->
 ...
 ```
 
-## 2.5 suspend
+## 2.5 suspend & pagination
 
-## 2.6 pagination
+### 2.5.1 suspend
+
+`suspend`是kotlin的关键字，与`coroutine`配套使用
+
+```
+suspend fun findAll(): List<Vo> = coroutineScope {
+        Entity.selectAll().orderBy(Entity.createTime).map { rowMapper(it) }
+    }
+```
+
+- `coroutine`相当于把线程作为上下文。一台普通的机器，开上万个`coroutine`都可以正常运行
+
+- 创建`coroutine`的方法很多。不限于`coroutineScope{}`
+
+- 必须使用`suspend`标注`coroutine`的代码，其他部分看起来跟`顺序执行`的代码没有区别
+
+> 只是语法糖而已，肯定是框架帮我们做了剩下的工作
+
+### 2.5.2 pagination
+
+目前的版本，不支持泛型。
+
+所以，每个需要分页显示的model，都需要定义一个具体的model。如下：
+
+```
+@Component
+class UserQuery : Query{
+  suspend fun students(pageRequest: PageRequest): StudentPage {
+     ...
+  }
+}
+
+data class StudentPage(
+        override val pageSize: Int = 10,
+        override val totalCount: Int = 1,
+        override val list: List<Student> = emptyList()
+) : Pageable<Student>()
+
+data class Student(...)
+```
+
+### 2.5.3 自定义的pagination model
+
+```
+data class PageRequest(
+        val pageNumber: Int = 1, //当前页
+        val pageSize: Int = 10 //每页数量
+)
+
+open class Pageable<T>(
+        open val pageSize: Int = 10, //每页数量
+        open val totalCount: Int = 1, //总条数
+        open val list: List<T> = emptyList() //当前页的数据
+) {
+    fun totalPageNumber() = if (totalCount % pageSize == 0) {
+        totalCount / pageSize
+    } else {
+        totalCount / pageSize + 1
+    }
+}
+
+
+```
+
+## 2.6 context
+
+```
+@Component
+class UserQuery : Query{
+  @GraphQLDescription("query that uses GraphQLContext context")
+    fun contextualQuery(
+            value: Int,
+            context: MyGraphQLContext
+    ): ContextualResponse = ContextualResponse(value, context.myCustomValue)
+}
+
+class MyGraphQLContext(
+  val myCustomValue: String, 
+  val request: ServerHttpRequest, 
+  val response: ServerHttpResponse, 
+  var subscriptionValue: String? = null) : GraphQLContext
+
+@Component
+class MyGraphQLContextFactory : GraphQLContextFactory<MyGraphQLContext> {
+    override suspend fun generateContext(
+       request: ServerHttpRequest, 
+       response: ServerHttpResponse
+    ): MyGraphQLContext = MyGraphQLContext(
+            myCustomValue = request.headers["token"]?.first() ?: 
+               throw ErrorCodeException("invalid_token", "required token"),
+            request = request,
+            response = response,
+            subscriptionValue = null
+    )
+}
+
+@GraphQLDescription("simple response that contains value read from context")
+data class ContextualResponse(val passedInValue: Int, val contextValue: String)
+```
 
 ## 2.7 directive & validation
 
+### 2.7.1 validation
+
+```
+1. dependency
+val validationVersion = "0.0.3"
+implementation("com.graphql-java:graphql-java-extended-validation:$validationVersion")
+
+2. model
+import com.expediagroup.graphql.scalars.ID
+import javax.validation.constraints.Pattern
+
+data class User(
+        val id: ID,
+        val name: String,
+        val age: Int,
+        @field:Pattern(regexp = EMAIL, message = "邮箱格式错误")
+        val email: String
+)
+const val EMAIL = "^([a-z0-9A-Z]+[-|\\.|_]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$"
+
+3. mutation
+import com.expediagroup.graphql.spring.operations.Mutation
+import org.springframework.stereotype.Component
+import org.springframework.validation.annotation.Validated
+import org.study.account.model.User
+import javax.validation.Valid
+
+@Component
+@Validated
+class UserMutation : Mutation {
+    fun addUser(@Valid request:User) = request.email
+}
+```
+
+
+
+
+
+
+
 ## 2.8 subscription
+
+
+
+
 
 
 

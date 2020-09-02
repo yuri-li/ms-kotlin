@@ -34,10 +34,12 @@ dependencies {
     val exposedVersion = "0.25.1"
     val psqlVersion = "42.2.15"
     val hikariVersion = "3.4.5"
+    val validationVersion = "0.0.3"
     val commonVersion: String by project
 
     implementation("org.study:common:$commonVersion")
     implementation("com.expediagroup:graphql-kotlin-spring-server:$graphqlVersion")
+    implementation("com.graphql-java:graphql-java-extended-validation:$validationVersion")
     implementation("net.logstash.logback:logstash-logback-encoder:$logbackVersion")
     implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion") {
         exclude(group = "com.h2database")
