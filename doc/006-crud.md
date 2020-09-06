@@ -501,6 +501,8 @@ class UserMutation : Mutation {
 }
 ```
 
+### 2.7.2 directive
+
 
 
 
@@ -509,15 +511,25 @@ class UserMutation : Mutation {
 
 ## 2.8 subscription
 
+```
+import com.expediagroup.graphql.annotations.GraphQLDescription
+import com.expediagroup.graphql.spring.operations.Subscription
+import org.springframework.stereotype.Component
+import reactor.core.publisher.Flux
+import java.time.Duration
+import kotlin.random.Random
+
+@Component
+class SimpleSubscription : Subscription {
+    @GraphQLDescription("Returns a random number every second")
+    fun counter(): Flux<Int> = Flux.interval(Duration.ofSeconds(1)).map { Random.nextInt() }
+
+}
+```
+
+# 3 Introspection
 
 
-
-
-
-
-# 3 Query
-
-# 4 Mutations
 
 
 
