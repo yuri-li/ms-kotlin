@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.stereotype.Component
+import org.study.account.exception.ErrorCodeException
 import org.study.account.model.Admin
 import org.study.account.model.Customer
 import org.study.account.model.User
@@ -17,6 +18,7 @@ import org.study.account.model.page.StudentPage
 import org.study.account.model.vo.Course
 import org.study.account.service.CourseService
 import org.study.account.service.StudentService
+import java.util.*
 
 @Component
 class UserQuery(
@@ -25,13 +27,13 @@ class UserQuery(
 ) : Query {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    /* @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
-     fun customException(flag: Boolean): User {
+    @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
+     fun customException(flag: Boolean): String {
          if (flag) {
              throw ErrorCodeException("XXXXXXXXXXX", "故意出错")
          }
-         return User(ID(UUID.randomUUID().toString()), "yuri", 18, "123@qq.com")
-     }*/
+         return UUID.randomUUID().toString()
+     }
 
     @GraphQLDescription("custom scalar: Kotlin Unit")
     fun customScalar() {
@@ -78,7 +80,8 @@ class SecurityContextFactory : GraphQLContextFactory<OAuth2Context<User>> {
         } else if ("Admin" == token) {
             OAuth2Context<User>(token, Admin("a001", "aName001", DateTime.now()))
         } else {
-            OAuth2Context()
+            throw ErrorCodeException("invalid_token", "invalid token")
+//            OAuth2Context()
         }
     }
 }

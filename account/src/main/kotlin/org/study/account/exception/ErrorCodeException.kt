@@ -1,5 +1,7 @@
 package org.study.account.exception
 
+import com.expediagroup.graphql.annotations.GraphQLIgnore
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import graphql.Assert
 import graphql.ErrorClassification
@@ -11,10 +13,11 @@ import graphql.language.SourceLocation
 class ErrorCodeException(val code: String, override val message: String) : RuntimeException(message)
 
 @JsonIgnoreProperties("exception")
-class ErrorCodeDataFetchingGraphQLError(val path: ExecutionPath, val exception: ErrorCodeException, val sourceLocation: SourceLocation) : GraphQLError {
-    override fun getMessage(): String = exception.message
+class ErrorCodeDataFetchingGraphQLError(@JsonIgnore val ex:ErrorCodeException) : GraphQLError {
+    override fun getMessage(): String = ex.message
+    @JsonIgnore
     override fun getErrorType(): ErrorClassification = ErrorType.DataFetchingException
-    override fun getLocations(): List<SourceLocation> = listOf(sourceLocation)
-    override fun getPath(): List<Any> = Assert.assertNotNull(path).toList()
-    override fun getExtensions(): Map<String, Any> = mapOf("code" to exception.code, "reason" to "ErrorCodeException")
+    override fun getLocations(): List<SourceLocation> = emptyList()
+    override fun getPath(): List<Any> = emptyList()
+    override fun getExtensions(): Map<String, Any> = mapOf("code" to ex.code, "reason" to "ErrorCodeException")
 }
