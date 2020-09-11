@@ -1,7 +1,6 @@
 package org.study.account.config
 
 import com.expediagroup.graphql.directives.KotlinDirectiveWiringFactory
-import com.expediagroup.graphql.directives.KotlinSchemaDirectiveWiring
 import com.expediagroup.graphql.hooks.SchemaGeneratorHooks
 import graphql.schema.Coercing
 import graphql.schema.GraphQLScalarType
@@ -9,7 +8,6 @@ import graphql.schema.GraphQLType
 import org.joda.time.DateTime
 import org.springframework.beans.factory.BeanFactoryAware
 import org.springframework.context.annotation.Configuration
-import org.study.account.model.directive.LowercaseSchemaDirectiveWiring
 import org.study.common.util.toDateTime
 import org.study.common.util.toDatetimeFormatter
 import reactor.core.publisher.Mono
@@ -18,12 +16,8 @@ import kotlin.reflect.KType
 import kotlin.reflect.full.isSubclassOf
 
 @Configuration
-class CustomScalarGeneratorHooks(
-        override val wiringFactory: KotlinDirectiveWiringFactory = KotlinDirectiveWiringFactory(
-                manualWiring = mapOf<String, KotlinSchemaDirectiveWiring>("lowercase" to LowercaseSchemaDirectiveWiring())
-        )
-) : SchemaGeneratorHooks {
-
+//class CustomScalarGeneratorHooks(override val wiringFactory: KotlinDirectiveWiringFactory) : SchemaGeneratorHooks {
+class CustomScalarGeneratorHooks : SchemaGeneratorHooks {
     /**
      * Register additional GraphQL scalar types.
      */
@@ -78,7 +72,6 @@ abstract class CustomCoercing<S, T> : Coercing<S, T> {
         println("--------")
         return read(input as T)
     }
-
     final override fun parseLiteral(input: Any): S {
         println("=========")
         return read(input as T)

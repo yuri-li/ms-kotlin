@@ -1,15 +1,27 @@
 package org.study.account.model
 
-import com.expediagroup.graphql.scalars.ID
-import org.study.account.model.directive.Lowercase
-import javax.validation.constraints.Pattern
+import com.fasterxml.jackson.annotation.JsonIgnore
+import org.joda.time.DateTime
 
-data class User(
-        val id: ID,
-        val name: String,
-        val age: Int,
-        @Lowercase
-        @field:Pattern(regexp = EMAIL, message = "邮箱格式错误")
-        val email: String
-)
-const val EMAIL = "^([a-z0-9A-Z]+[-|\\.|_]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$"
+enum class Role{
+    Customer, Admin
+}
+
+sealed class User(open val id: String, open val name: String) {
+    @JsonIgnore
+    fun getBaseInfo() = "role: ${this.javaClass.simpleName}, id: `${this.id}`, name: `${this.name}`"
+
+    override fun toString(): String = id
+}
+
+data class Customer(
+        override val id: String,
+        override val name: String,
+        val createTime: DateTime
+) : User(id, name)
+
+data class Admin(
+        override val id: String,
+        override val name: String,
+        val createTime: DateTime
+) : User(id, name)

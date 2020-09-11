@@ -2,29 +2,21 @@ package org.study.account.graphql
 
 import com.expediagroup.graphql.annotations.GraphQLDescription
 import com.expediagroup.graphql.execution.GraphQLContext
-import com.expediagroup.graphql.scalars.ID
 import com.expediagroup.graphql.spring.execution.GraphQLContextFactory
 import com.expediagroup.graphql.spring.operations.Query
+import org.joda.time.DateTime
 import org.slf4j.LoggerFactory
-import org.springframework.core.io.buffer.DataBuffer
-import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.http.server.reactive.ServerHttpResponse
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyExtractors
-import org.study.account.exception.ErrorCodeException
+import org.study.account.model.Admin
+import org.study.account.model.Customer
 import org.study.account.model.User
 import org.study.account.model.page.PageRequest
 import org.study.account.model.page.StudentPage
 import org.study.account.model.vo.Course
 import org.study.account.service.CourseService
 import org.study.account.service.StudentService
-import reactor.core.publisher.Flux
-import java.nio.CharBuffer
-import java.nio.charset.StandardCharsets
-import java.util.*
-import java.util.concurrent.atomic.AtomicReference
-
 
 @Component
 class UserQuery(
@@ -33,17 +25,17 @@ class UserQuery(
 ) : Query {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
-    fun customException(flag: Boolean): User {
-        if (flag) {
-            throw ErrorCodeException("XXXXXXXXXXX", "故意出错")
-        }
-        return User(ID(UUID.randomUUID().toString()), "yuri", 18, "123@qq.com")
-    }
+    /* @GraphQLDescription("flag=true -> throw exception; flag=false -> User")
+     fun customException(flag: Boolean): User {
+         if (flag) {
+             throw ErrorCodeException("XXXXXXXXXXX", "故意出错")
+         }
+         return User(ID(UUID.randomUUID().toString()), "yuri", 18, "123@qq.com")
+     }*/
 
     @GraphQLDescription("custom scalar: Kotlin Unit")
     fun customScalar() {
-        log.info("test void")
+        log.info("test void ------")
     }
 
     @GraphQLDescription("Get all courses")
@@ -55,21 +47,38 @@ class UserQuery(
         return StudentPage(pageSize = 3, list = list)
     }
 
+
+    /*@GraphQLDescription("Returns message modified by the manually wired directive to force lowercase")
+    @LowerCase
+    fun forceLowercaseEcho(msg: String) = msg
+
     @GraphQLDescription("query that uses GraphQLContext context")
     fun contextualQuery(
             value: Int,
             context: MyGraphQLContext
-    ): ContextualResponse = ContextualResponse(value, context.value)
+    ): ContextualResponse = ContextualResponse(value, context.value)*/
 
+    fun customer(context: OAuth2Context<Customer>, value: Int) = "context.user: ${context.user!!.getBaseInfo()}, 普通参数:${value}"
+
+    fun admin(context: OAuth2Context<Admin>, value: Int) = "context.user: ${context.user!!.getBaseInfo()}, 普通参数:${value}"
 }
 
-data class ContextualResponse(val passedInValue: Int, val contextValue: String?)
 
-class MyGraphQLContext(val value: String?) : GraphQLContext
+class OAuth2Context<T : User>(val token: String? = null, val user: T? = null) : GraphQLContext
 
 @Component
-class MyGraphQLContextFactory : GraphQLContextFactory<MyGraphQLContext> {
-    override suspend fun generateContext(request: ServerHttpRequest, response: ServerHttpResponse): MyGraphQLContext {
-        return MyGraphQLContext(request.headers["token"]?.first() ?: null)
+class SecurityContextFactory : GraphQLContextFactory<OAuth2Context<User>> {
+    override suspend fun generateContext(request: ServerHttpRequest, response: ServerHttpResponse): OAuth2Context<User> {
+        val token = request.headers["token"]?.first()
+
+        return if (token == null) {
+            OAuth2Context()
+        } else if ("Customer" == token) {
+            OAuth2Context<User>(token, Customer("c001", "cName001", DateTime.now()))
+        } else if ("Admin" == token) {
+            OAuth2Context<User>(token, Admin("a001", "aName001", DateTime.now()))
+        } else {
+            OAuth2Context()
+        }
     }
 }
