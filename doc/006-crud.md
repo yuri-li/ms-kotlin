@@ -529,7 +529,9 @@ class SimpleSubscription : Subscription {
 
 # 3 Introspection
 
+# 4 OAuth2
 
+![image-20200910180505874](/image-20200910180505874.png)
 
 
 
