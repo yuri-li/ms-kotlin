@@ -43,6 +43,7 @@ class GlobalExceptionHandler : DataFetcherExceptionHandler {
 internal fun response(exception: ErrorCodeException) =
         DataFetcherExceptionHandlerResult.newResult().error(ErrorCodeDataFetchingGraphQLError(exception)).build()
 
+@Suppress("LeakingThis")
 @Configuration
 @Order(-2)
 class GlobalErrorHandlerConfiguration(
@@ -50,13 +51,13 @@ class GlobalErrorHandlerConfiguration(
         resourceProperties: ResourceProperties,
         applicationContext: ApplicationContext,
         viewResolversProvider: ObjectProvider<List<ViewResolver>>,
-        serverCodecConfigurer: ServerCodecConfigurer
+        serverCodecConfigure: ServerCodecConfigurer
 ) : AbstractErrorWebExceptionHandler(errorAttributes, resourceProperties, applicationContext) {
 
     init {
         setViewResolvers(viewResolversProvider.getIfAvailable { emptyList() })
-        setMessageWriters(serverCodecConfigurer.writers)
-        setMessageReaders(serverCodecConfigurer.readers)
+        setMessageWriters(serverCodecConfigure.writers)
+        setMessageReaders(serverCodecConfigure.readers)
     }
 
     override fun getRoutingFunction(e: ErrorAttributes): RouterFunction<ServerResponse> =
