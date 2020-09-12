@@ -61,7 +61,7 @@ class UserQuery(
     ): ContextualResponse = ContextualResponse(value, context.value)*/
 
     fun customer(context: OAuth2Context<Customer>, value: Int) = "context.user: ${context.user!!.getBaseInfo()}, 普通参数:${value}"
-
+    fun customerDetail(context: OAuth2Context<Customer>, value: Int) = "(details) context.user: ${context.user!!.getBaseInfo()}, 普通参数:${value}"
     fun admin(context: OAuth2Context<Admin>, value: Int) = "context.user: ${context.user!!.getBaseInfo()}, 普通参数:${value}"
 }
 
@@ -70,8 +70,11 @@ class OAuth2Context<T : User>(val token: String? = null, val user: T? = null) : 
 
 @Component
 class SecurityContextFactory : GraphQLContextFactory<OAuth2Context<User>> {
+    private val log = LoggerFactory.getLogger(this::class.java)
+
     override suspend fun generateContext(request: ServerHttpRequest, response: ServerHttpResponse): OAuth2Context<User> {
         val token = request.headers["token"]?.first()
+        log.info("fetch token from headers: ${token}")
 
         return if (token == null) {
             OAuth2Context()

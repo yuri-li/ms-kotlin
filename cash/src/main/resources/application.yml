@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: cash
+
+server:
+  port: 8080
+
+graphql:
+  federation:
+    enabled: true
+  packages:
+    - "org.study.cash"

@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: order
+
+server:
+  port: 8081
+
+graphql:
+  federation:
+    enabled: true
+  packages:
+    - "org.study.order"
