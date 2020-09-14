@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component
 @Suppress("FunctionOnlyReturningConstant")
 @Component
 class SimpleQuery : Query {
-    fun dataFromBaseApp() = "hello from base app"
+    fun dataFromCash() = "hello from cash-service"
 
     @Deprecated(message = "old deprecated query", replaceWith = ReplaceWith("dataFromBaseApp"))
     fun deprecatedBaseAppQuery() = "this is deprecated"

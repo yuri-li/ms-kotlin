@@ -22,5 +22,5 @@ import org.springframework.stereotype.Component
 @Suppress("FunctionOnlyReturningConstant")
 @Component
 class SimpleQuery : Query {
-    fun dataFromExtendApp() = "hello from extend app"
+    fun dataFromOrder() = "hello from order-service"
 }

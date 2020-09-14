@@ -28,10 +28,10 @@ import kotlin.random.Random
 @ExtendsDirective
 class Widget(
     @property:ExternalDirective val id: Int,
-    val randomValueFromExtend: Int
+    val randomValueFromOrder: Int
 ) {
     @Suppress("FunctionOnlyReturningConstant")
-    fun extraStringFromExtend() = "This data is coming from extend-app!"
+    fun extraStringFromOrder() = "This data is coming from order-service"
 }
 
 class InvalidWidgetIdException : RuntimeException()

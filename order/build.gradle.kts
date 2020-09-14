@@ -4,6 +4,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.9.RELEASE"
     kotlin("jvm") version "1.3.72"
     kotlin("plugin.spring") version "1.3.72"
+//    id("com.expediagroup.graphql") version "4.0.0-alpha.3"
 }
 
 group = "org.study"
@@ -47,3 +48,12 @@ tasks {
         distributionType = Wrapper.DistributionType.ALL
     }
 }
+
+/*
+graphql {
+    client {
+        endpoint = "http://localhost:8080/graphql"
+        packageName = "com.example.generated"
+        clientType = com.expediagroup.graphql.plugin.generator.GraphQLClientType.WEBCLIENT
+    }
+}*/
